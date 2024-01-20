@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useAuth } from '../Componets/AuthContext';
 
-const Login = () => {
+const Register = () => {
     const [credentials, setCredentials] = useState({
         username: '',
         password: '',
@@ -22,7 +22,7 @@ const Login = () => {
 
     const handleSubmit = () => {
         axios
-            .post('http://localhost:3000/login', credentials)
+            .post('http://localhost:3000/register', credentials)
             .then((response) => {
                 login()
                 const data = response.data;
@@ -30,7 +30,7 @@ const Login = () => {
                 navigate('/chat');
                 Swal.fire({
                     title: 'Success!',
-                    text: 'Sucess Login account',
+                    text: 'Sucess Register',
                     icon: 'success',
                 })
             })
@@ -49,7 +49,7 @@ const Login = () => {
                 <div className="col-md-6">
                     <div className="card">
                         <div className="card-body">
-                            <h2 className="card-title">Login</h2>
+                            <h2 className="card-title">Register</h2>
                             <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
                                 <div className="mb-3">
                                     <label htmlFor="username" className="form-label">
@@ -81,7 +81,7 @@ const Login = () => {
                                     type="submit"
                                     className="btn btn-primary"
                                 >
-                                    Login
+                                    Register
                                 </button>
                             </form>
                         </div>
@@ -92,4 +92,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;

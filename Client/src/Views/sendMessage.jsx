@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
+import { Form, Button, Container, Row, Col, ListGroup } from 'react-bootstrap';
 
 const useSocketConnection = () => {
     const [socket, setSocket] = useState(null);
@@ -35,21 +36,20 @@ const useSocketConnection = () => {
     return socket;
 };
 
-const SendMessage = () => {
+const Chat = () => {
     const [message, setMessage] = useState('');
     const [name, setName] = useState('');
-    const [isGlobal, setIsGlobal] = useState(false);
     const [receivedMessages, setReceivedMessages] = useState([]);
-
     const socket = useSocketConnection();
 
     useEffect(() => {
-        axios.get('http://localhost:3000/getchat', { headers: { access_token: localStorage.getItem('access_token') } })
+        axios.get('http://localhost:3000/chat', { headers: { access_token: localStorage.getItem('access_token') } })
             .then(response => {
                 setReceivedMessages(response.data)
             })
             .catch(err => console.log(err))
     }, []);
+
     useEffect(() => {
         if (socket) {
             socket.on('message', (data) => {
@@ -64,10 +64,6 @@ const SendMessage = () => {
         };
     }, [socket]);
 
-    const handleOptionChange = (e) => {
-        setIsGlobal(e.target.value === 'global');
-    };
-
     const handleMessageChange = (e) => {
         setMessage(e.target.value);
     };
@@ -78,66 +74,45 @@ const SendMessage = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (isGlobal) {
-            console.log(`Sending global message: ${message}`);
-            socket.emit('message', { message, type: 'Global' });
-        } else {
-            console.log(`Sending personal message to ${name}: ${message}`);
-            socket.emit('message', { message, type: 'Personal', clientName: name });
-        }
+        socket.emit('message', { message, type: 'Personal', clientName: name });
         setMessage('');
         setName('');
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>
-                        <input
-                            type="radio"
-                            value="personal"
-                            checked={!isGlobal}
-                            onChange={handleOptionChange}
-                        />
-                        Personal
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            value="global"
-                            checked={isGlobal}
-                            onChange={handleOptionChange}
-                        />
-                        Global
-                    </label>
-                </div>
-                {!isGlobal && (
+        <Container className="mt-5">
+            <Row>
+                <Col md={6}>
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group>
+                            <Form.Label>Name:</Form.Label>
+                            <Form.Control type="text" value={name} onChange={handleNameChange} />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Message:</Form.Label>
+                            <Form.Control type="text" value={message} onChange={handleMessageChange} />
+                        </Form.Group>
+                        <br></br>
+                        <Button variant="primary" type="submit">
+                            Send
+                        </Button>
+                    </Form>
+                </Col>
+                <Col md={6}>
                     <div>
-                        <label>
-                            Name:
-                            <input type="text" value={name} onChange={handleNameChange} />
-                        </label>
+                        <h2>Received Messages</h2>
+                        <ListGroup>
+                            {receivedMessages.map((msg, index) => (
+                                <ListGroup.Item key={index}>
+                                    {msg.type} (Sender {msg.sender}): {msg.message}
+                                </ListGroup.Item>
+                            ))}
+                        </ListGroup>
                     </div>
-                )}
-                <div>
-                    <label>
-                        Message:
-                        <input type="text" value={message} onChange={handleMessageChange} />
-                    </label>
-                </div>
-                <button type="submit">Send</button>
-            </form>
-            <div>
-                <h2>Received Messages</h2>
-                <ul>
-                    {receivedMessages.map((msg, index) => (
-                        <li key={index}>{msg.type === 'Global' ? `Global: (Sender ${msg.sender}): ` : `Personal (Sender ${msg.sender}): `}{msg.message}</li>
-                    ))}
-                </ul>
-            </div>
-        </div>
+                </Col>
+            </Row>
+        </Container>
     );
 };
 
-export default SendMessage;
+export default Chat;
