@@ -52,6 +52,7 @@ const router = createBrowserRouter([
         path: '/',
         element: <App />,
         children: [
+            { path: '/', element: <ProtectedRoute element={SendMessage} path="/chat" /> },
             { path: '/chat', element: <ProtectedRoute element={SendMessage} path="/chat" /> },
             { path: '/login', element: <ProtectedRouteHaveAccessToken element={Login} path="/login" /> },
             { path: '/register', element: <ProtectedRouteHaveAccessToken element={Register} path="/register" /> },
