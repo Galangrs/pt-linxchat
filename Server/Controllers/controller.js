@@ -303,12 +303,24 @@ class Controller {
                 include: [{ model: Product }],
             });
 
+            var options = {
+                weekday: 'long',
+                year: 'numeric',  
+                month: 'numeric',
+                day: 'numeric',   
+                hour: 'numeric',  
+                minute: 'numeric', 
+                hour12: false     
+            };
+            var dateTimeFormat = new Intl.DateTimeFormat('id-ID', options);
+
             const transformedData = dataCart.map((cart) => ({
                 id: cart.id,
                 totalItem: cart.totalItem,
                 totalPrice: cart.totalPrice,
                 product: cart.Product.product,
                 img_url: cart.Product.img_url,
+                checkout: dateTimeFormat.format(cart.createdAt),
             }));
 
             res.status(200).json(transformedData);

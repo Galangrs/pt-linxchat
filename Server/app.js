@@ -86,6 +86,8 @@ io.on("connection", (socket) => {
                     sender: UserClient[socket.id].username,
                     receiver: dataReciever.username,
                 });
+            } else {
+                console.log("result key kgk di temukan");
             }
             io.to(socket.id).emit("message", {
                 type: "Personal",
@@ -102,6 +104,7 @@ io.on("connection", (socket) => {
         }
     });
     socket.on("disconnect", () => {
+        delete UserClient[socket.id];
         console.log("Client disconnected");
     });
 });

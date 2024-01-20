@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
 import axios from 'axios';
 
-const Products = () => {
+const Carts = () => {
     const [cart, setCart] = useState([]);
 
     useEffect(() => {
@@ -31,18 +31,20 @@ const Products = () => {
                         <th>Total Item</th>
                         <th>Total Price</th>
                         <th>Image</th>
+                        <th>Checkout</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {cart.map((product) => (
-                        <tr key={product.id}>
-                            <td>{product.id}</td>
-                            <td>{product.product}</td>
-                            <td>{product.totalItem}</td>
-                            <td>${product.totalPrice.toFixed(2)}</td>
+                    {cart.map((cart) => (
+                        <tr key={cart.id}>
+                            <td>{cart.id}</td>
+                            <td>{cart.product}</td>
+                            <td>{cart.totalItem}</td>
+                            <td>${cart.totalPrice.toFixed(2)}</td>
                             <td>
-                                <img src={product.img_url} alt={product.product} style={{ width: '200px', height: '200px' }} />
+                                <img src={cart.img_url} alt={cart.product} style={{ width: '200px', height: '200px' }} />
                             </td>
+                            <td>{cart.checkout}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -51,4 +53,4 @@ const Products = () => {
     );
 };
 
-export default Products;
+export default Carts;
